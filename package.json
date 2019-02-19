@@ -1,0 +1,45 @@
+{
+  "name": "chartjs-plugin-rough",
+  "version": "0.1.0",
+  "description": "Chart.js plugin for Rough.js",
+  "main": "dist/chartjs-plugin-rough.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "dependencies": {
+    "chart.js": "^2.7.0",
+    "roughjs": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint-config-chartjs": "^0.1.0",
+    "gulp": "^4.0.0",
+    "gulp-eslint": "^5.0.0",
+    "gulp-file": "^0.4.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-streamify": "^1.0.2",
+    "gulp-uglify": "^3.0.0",
+    "gulp-zip": "^4.2.0",
+    "merge2": "^1.2.3",
+    "rollup-stream": "^1.24.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nagix/chartjs-plugin-rough.git"
+  },
+  "keywords": [
+    "chart.js",
+    "plugin",
+    "rough.js",
+    "hand-drawn",
+    "sketch"
+  ],
+  "author": "Akihiko Kusanagi <nagi@nagi-p.com> (https://nagix.github.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nagix/chartjs-plugin-rough/issues"
+  },
+  "homepage": "https://nagix.github.io/chartjs-plugin-rough"
+}

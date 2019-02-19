@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>chartjs-plugin-rough sample</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rough.js/3.0.0/rough.js"></script>
+	<script src="../dist/chartjs-plugin-rough.js"></script>
+	<style>
+		canvas {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+		.chart {
+			margin: auto;
+			width: 75%;
+		}
+		.text-center {
+			text-align: center;
+		}
+		.label {
+			display: inline-block;
+			text-align: right;
+			width: 140px;
+		}
+		.value {
+			display: inline-block;
+			text-align: left;
+			width: 80px;
+		}
+		.control {
+			width: 200px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="chart">
+		<canvas id="myChart"></canvas>
+	</div>
+	<div>
+		<p class="text-center">
+			<button id="randomizeData">Randomize Data</button>
+			<button id="addDataset">Add Dataset</button>
+			<button id="removeDataset">Remove Dataset</button>
+			<button id="addData">Add Data</button>
+			<button id="removeData">Remove Data</button>
+		</p>
+	</div>
+	<div>
+		<div class="text-center">
+			<span class="label">roughness:</span>
+			<span id="roughnessValue" class="value">1</span>
+			<span><input type="range" min="0" max="10" step="0.1" value="1" id="roughness" class="control"></span>
+		</div>
+		<div class="text-center">
+			<span class="label">bowing:</span>
+			<span id="bowingValue" class="value">1</span>
+			<span><input type="range" min="0" max="10" step="0.1" value="1" id="bowing" class="control"></span>
+		</div>
+		<div class="text-center">
+			<span class="label">fillStyle:</span>
+			<span id="fillStyleValue" class="value">'hachure'</span>
+			<span><select id="fillStyle" class="control">
+				<option value="hachure" selected>hachure</option>
+				<option value="solid">solid</option>
+				<option value="zigzag">zigzag</option>
+				<option value="cross-hatch">cross-hatch</option>
+				<option value="dots">dots</option>
+			</select></span>
+		</div>
+		<div class="text-center">
+			<span class="label">fillWeight:</span>
+			<span id="fillWeightValue" class="value">0.5</span>
+			<span><input type="range" min="0" max="10" step="0.1" value="0.5" id="fillWeight" class="control"></span>
+		</div>
+		<div class="text-center">
+			<span class="label">hachureAngle:</span>
+			<span id="hachureAngleValue" class="value">-41</span>
+			<span><input type="range" min="-90" max="90" step="1" value="-41" id="hachureAngle" class="control"></span>
+		</div>
+		<div class="text-center">
+			<span class="label">hachureGap:</span>
+			<span id="hachureGapValue" class="value">4</span>
+			<span><input type="range" min="0" max="50" step="1" value="4" id="hachureGap" class="control"></span>
+		</div>
+		<div class="text-center">
+			<span class="label">curveStepCount:</span>
+			<span id="curveStepCountValue" class="value">9</span>
+			<span><input type="range" min="0" max="100" step="1" value="9" id="curveStepCount" class="control"></span>
+		</div>
+		<div class="text-center">
+			<span class="label">simplification:</span>
+			<span id="simplificationValue" class="value">0</span>
+			<span><input type="range" min="0" max="1" step="0.01" value="0" id="simplification" class="control"></span>
+		</div>
+	</div>
+
+	<script>
+		var isIE = navigator.userAgent.indexOf('MSIE') !== -1 || navigator.userAgent.indexOf('Trident') !== -1;
+
+		var chartColors = {
+			red: 'rgb(255, 99, 132)',
+			orange: 'rgb(255, 159, 64)',
+			yellow: 'rgb(255, 205, 86)',
+			green: 'rgb(75, 192, 192)',
+			blue: 'rgb(54, 162, 235)',
+			purple: 'rgb(153, 102, 255)',
+			grey: 'rgb(201, 203, 207)'
+		};
+
+		function randomScalingFactor() {
+			return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
+		}
+
+		var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var color = Chart.helpers.color;
+		var config = {
+			type: 'line',
+			data: {
+				labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+				datasets: [{
+					label: 'Dataset 1',
+					backgroundColor: chartColors.red,
+					borderColor: chartColors.red,
+					data: [0, 0, 0, 0, 0, 0, 0].map(function() {
+						return randomScalingFactor();
+					})
+				}, {
+					label: 'Dataset 2',
+					backgroundColor: chartColors.blue,
+					borderColor: chartColors.blue,
+					data: [0, 0, 0, 0, 0, 0, 0].map(function() {
+						return randomScalingFactor();
+					})
+				}]
+			},
+			plugins: [ChartRough],
+			options: {
+				title: {
+					display: true,
+					text: 'Interactions sample'
+				},
+				elements: {
+					rectangle: {
+						borderWidth: 3
+					}
+				},
+				scales: {
+					xAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'Month'
+						}
+					}],
+					yAxes: [{
+						scaleLabel: {
+							display: true,
+							labelString: 'Value'
+						}
+					}]
+				},
+				plugins: {
+					rough: {
+						enabled: true
+					}
+				}
+			}
+		};
+
+		Chart.defaults.global.defaultFontFamily = '"Indie Flower", cursive';
+		Chart.defaults.global.defaultFontSize = 14;
+
+		window.onload = function() {
+			var ctx = document.getElementById('myChart').getContext('2d');
+			window.myChart = new Chart(ctx, config);
+		};
+
+		document.getElementById('randomizeData').addEventListener('click', function() {
+			config.data.datasets.forEach(function(dataset) {
+				dataset.data = dataset.data.map(function() {
+					return randomScalingFactor();
+				});
+			});
+			window.myChart.update();
+		});
+
+		var colorNames = Object.keys(chartColors);
+		document.getElementById('addDataset').addEventListener('click', function() {
+			var colorName = colorNames[config.data.datasets.length % colorNames.length];
+			var newColor = chartColors[colorName];
+			var newDataset = {
+				label: 'Dataset ' + (config.data.datasets.length + 1),
+				backgroundColor: newColor,
+				borderColor: newColor,
+				data: []
+			};
+
+			for (var index = 0; index < config.data.labels.length; ++index) {
+				newDataset.data.push(randomScalingFactor());
+			}
+
+			config.data.datasets.push(newDataset);
+			window.myChart.update();
+		});
+
+		document.getElementById('removeDataset').addEventListener('click', function() {
+			config.data.datasets.pop();
+			window.myChart.update();
+		});
+
+		document.getElementById('addData').addEventListener('click', function() {
+			if (config.data.datasets.length > 0) {
+				var month = MONTHS[config.data.labels.length % MONTHS.length];
+				config.data.labels.push(month);
+
+				config.data.datasets.forEach(function(dataset) {
+					dataset.data.push(randomScalingFactor());
+				});
+
+				window.myChart.update();
+			}
+		});
+
+		document.getElementById('removeData').addEventListener('click', function() {
+			config.data.labels.splice(-1, 1); // remove the label first
+
+			config.data.datasets.forEach(function(dataset) {
+				dataset.data.pop();
+			});
+
+			window.myChart.update();
+		});
+
+		document.getElementById('roughness').addEventListener(isIE ? 'change' : 'input', function() {
+			config.options.plugins.rough.roughness = +this.value;
+			window.myChart.update({duration: 0});
+			document.getElementById('roughnessValue').innerHTML = this.value;
+		});
+
+		document.getElementById('bowing').addEventListener(isIE ? 'change' : 'input', function() {
+			config.options.plugins.rough.bowing = +this.value;
+			window.myChart.update({duration: 0});
+			document.getElementById('bowingValue').innerHTML = this.value;
+		});
+
+		document.getElementById('fillStyle').addEventListener(isIE ? 'change' : 'input', function() {
+			config.options.plugins.rough.fillStyle = this.value;
+			window.myChart.update({duration: 0});
+			document.getElementById('fillStyleValue').innerHTML = '\'' + this.value + '\'';
+		});
+
+		document.getElementById('fillWeight').addEventListener(isIE ? 'change' : 'input', function() {
+			config.options.plugins.rough.fillWeight = +this.value;
+			window.myChart.update({duration: 0});
+			document.getElementById('fillWeightValue').innerHTML = this.value;
+		});
+
+		document.getElementById('hachureAngle').addEventListener(isIE ? 'change' : 'input', function() {
+			config.options.plugins.rough.hachureAngle = +this.value;
+			window.myChart.update({duration: 0});
+			document.getElementById('hachureAngleValue').innerHTML = this.value;
+		});
+
+		document.getElementById('hachureGap').addEventListener(isIE ? 'change' : 'input', function() {
+			config.options.plugins.rough.hachureGap = +this.value;
+			window.myChart.update({duration: 0});
+			document.getElementById('hachureGapValue').innerHTML = this.value;
+		});
+
+		document.getElementById('curveStepCount').addEventListener(isIE ? 'change' : 'input', function() {
+			config.options.plugins.rough.curveStepCount = +this.value;
+			window.myChart.update({duration: 0});
+			document.getElementById('curveStepCountValue').innerHTML = this.value;
+		});
+
+		document.getElementById('simplification').addEventListener(isIE ? 'change' : 'input', function() {
+			config.options.plugins.rough.simplification = +this.value;
+			window.myChart.update({duration: 0});
+			document.getElementById('simplificationValue').innerHTML = this.value;
+		});
+	</script>
+</body>
+
+</html>
