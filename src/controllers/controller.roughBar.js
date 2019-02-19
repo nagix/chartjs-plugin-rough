@@ -14,7 +14,7 @@ export default BarController.extend({
 
 	dataElementType: RoughRectangle,
 
-	// Ported from Chart.js 2.7.3. Modified for roughf bar.
+	// Ported from Chart.js 2.7.3. Modified for rough bar.
 	updateElement: function(rectangle, index, reset) {
 		var me = this;
 		var chart = me.chart;

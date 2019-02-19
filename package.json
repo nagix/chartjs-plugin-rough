@@ -1,7 +1,7 @@
 {
   "name": "chartjs-plugin-rough",
   "version": "0.1.0",
-  "description": "Chart.js plugin for Rough.js",
+  "description": "Chart.js plugin to create charts with a hand-drawn, sketchy, appearance",
   "main": "dist/chartjs-plugin-rough.js",
   "directories": {
     "doc": "docs",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "chart.js": "^2.7.0",
-    "roughjs": "^2.2.0"
+    "roughjs": "^2.0.1"
   },
   "devDependencies": {
     "eslint-config-chartjs": "^0.1.0",
@@ -41,5 +41,7 @@
   "bugs": {
     "url": "https://github.com/nagix/chartjs-plugin-rough/issues"
   },
-  "homepage": "https://nagix.github.io/chartjs-plugin-rough"
+  "homepage": "https://nagix.github.io/chartjs-plugin-rough",
+  "jsdelivr": "dist/chartjs-plugin-rough.min.js",
+  "unpkg": "dist/chartjs-plugin-rough.min.js"
 }

@@ -1,6 +1,6 @@
 # chartjs-plugin-rough
 
-[![npm](https://img.shields.io/npm/v/chartjs-plugin-rough.svg?style=flat-square)](https://npmjs.com/package/chartjs-plugin-rough) [![Bower](https://img.shields.io/bower/v/chartjs-plugin-rough.svg?style=flat-square)](https://libraries.io/bower/chartjs-plugin-rough) [![Travis](https://img.shields.io/travis/nagix/chartjs-plugin-rough/master.svg?style=flat-square)](https://travis-ci.org/nagix/chartjs-plugin-rough) [![Code Climate](https://img.shields.io/codeclimate/maintainability/nagix/chartjs-plugin-rough.svg?style=flat-square)](https://codeclimate.com/github/nagix/chartjs-plugin-rough)
+[![npm](https://img.shields.io/npm/v/chartjs-plugin-rough.svg?style=flat-square)](https://npmjs.com/package/chartjs-plugin-rough) [![Bower](https://img.shields.io/bower/v/chartjs-plugin-rough.svg?style=flat-square)](https://libraries.io/bower/chartjs-plugin-rough) [![Travis](https://img.shields.io/travis/com/nagix/chartjs-plugin-rough/master.svg?style=flat-square)](https://travis-ci.com/nagix/chartjs-plugin-rough) [![Code Climate](https://img.shields.io/codeclimate/maintainability/nagix/chartjs-plugin-rough.svg?style=flat-square)](https://codeclimate.com/github/nagix/chartjs-plugin-rough)
 
 *[Chart.js](https://www.chartjs.org) plugin to create charts with a hand-drawn, sketchy, appearance*
 
