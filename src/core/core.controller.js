@@ -4,6 +4,9 @@ import Chart from 'chart.js';
 
 var helpers = Chart.helpers;
 
+// For Chart.js 2.7.1 backward compatibility
+Chart.layouts = Chart.layouts || Chart.layoutService;
+
 // For Chart.js 2.7.3 backward compatibility
 helpers.canvas = helpers.canvas || {};
 helpers.canvas._isPointInArea = helpers.canvas._isPointInArea || function(point, area) {

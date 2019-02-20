@@ -44,8 +44,10 @@ var descriptors = plugins.descriptors;
 plugins.descriptors = function(chart) {
 	var rough = chart._rough;
 
+	// Replace filler/legend plugins with rough filler/legend plugins
 	if (rough) {
-		var cache = chart.$plugins || (chart.$plugins = {});
+		// chart._plugins for Chart.js 2.7.1 backward compatibility
+		var cache = chart.$plugins || chart._plugins || (chart.$plugins = chart._plugins = {});
 		if (cache.id === this._cacheId) {
 			return cache.descriptors;
 		}
@@ -81,6 +83,7 @@ export default {
 		chart.buildOrUpdateControllers = function() {
 			var result;
 
+			// Replace controllers with rough controllers on creation
 			Chart.controllers = roughControllers;
 			result = Chart.prototype.buildOrUpdateControllers.apply(this, arguments);
 			Chart.controllers = controllers;
@@ -88,9 +91,16 @@ export default {
 			return result;
 		};
 
+		// Remove the existing legend if exists
 		if (chart.legend) {
 			Chart.layouts.removeBox(chart, chart.legend);
 			delete chart.legend;
 		}
+
+		// Invalidate plugin cache and create new one
+		delete chart.$plugins;
+		// For Chart.js 2.7.1 backward compatibility
+		delete chart._plugins;
+		plugins.descriptors(chart);
 	}
 };
