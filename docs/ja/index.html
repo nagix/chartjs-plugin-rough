@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="/css/octicons.css">
@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower">
     <title>chartjs-plugin-rough</title>
     <meta property="og:title" content="chartjs-plugin-rough" />
-    <meta property="og:locale" content="en_US" />
-    <link rel="canonical" href="https://nagix.github.io/chartjs-plugin-rough" />
-    <meta property="og:url" content="https://nagix.github.io/chartjs-plugin-rough" />
+    <meta property="og:locale" content="ja_JP" />
+    <link rel="canonical" href="https://nagix.github.io/chartjs-plugin-rough/ja" />
+    <meta property="og:url" content="https://nagix.github.io/chartjs-plugin-rough/ja" />
     <meta property="og:site_name" content="chartjs-plugin-rough" />
     <meta name="twitter:site" content="@nagix" />
     <meta name="theme-color" content="#ffffff">
@@ -18,15 +18,21 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rough.js/3.0.0/rough.js"></script>
     <script type="text/javascript" src="https://github.com/chartjs/chartjs-plugin-deferred/releases/download/v1.0.1/chartjs-plugin-deferred.js"></script>
     <script type="text/javascript" src="https://github.com/nagix/chartjs-plugin-rough/releases/download/v0.1.0/chartjs-plugin-rough.min.js"></script>
+    <style type="text/css">
+      @font-face {
+        font-family: 'dartsfont';
+        src: url('http://www.p-darts.jp/wf/dartsfont.woff') format('woff');
+      }
+    </style>
   </head>
   <body>
     <section id="hero-spot" class="hero-spot">
       <h1>chartjs-plugin-rough</h1>
-      <h2><a href="./samples">Samples</a> | <a href="https://github.com/nagix/chartjs-plugin-rough">GitHub</a></h2>
-      <a href="./ja/" class="help-link">日本語</a>
+      <h2><a href="../samples">サンプル</a> | <a href="https://github.com/nagix/chartjs-plugin-rough">GitHub</a></h2>
+      <a href="../" class="help-link">English</a>
     </section>
     <section id="tutorial" class="tutorial">
-      <h2><a href="https://www.chartjs.org">Chart.js</a> plugin that lets you draw sketchy charts.<br />Create charts with a hand-drawn, sketchy, appearance.</h2>
+      <h2>スケッチ風チャートを描画する <a href="https://www.chartjs.org">Chart.js</a> プラグインです。<br />手書きスケッチのような見た目のチャートを作ってみましょう。</h2>
 
       <div style="width: 550px; margin-left: auto; margin-right: auto">
         <canvas id="chart1"></canvas>
@@ -35,8 +41,8 @@
       <ul id="plain-js" class="tutorial-list wrapper active">
 
         <li>
-          <h4>Include scripts</h4>
-          <p>First, we need to include <a href="https://github.com/chartjs/Chart.js/releases/latest">Chart.js</a>, <a href="https://github.com/pshihn/rough/releases/latest">Rough.js</a> and <a href="https://github.com/nagix/chartjs-plugin-rough/releases/latest">chartjs-plugin-rough.js</a> in our page.</p>
+          <h4>スクリプトを含める</h4>
+          <p>まず <a href="https://github.com/chartjs/Chart.js/releases/latest">Chart.js</a>、<a href="https://github.com/pshihn/rough/releases/latest">Rough.js</a>、<a href="https://github.com/nagix/chartjs-plugin-rough/releases/latest">chartjs-plugin-rough.js</a> をページに含める必要があります。</p>
           <div class="terminal">
             <div class="header"></div>
             <div class="shell">
@@ -48,8 +54,8 @@
         </li>
 
         <li>
-          <h4>Create a canvas</h4>
-          <p>We need to have a canvas in our page.</p>
+          <h4>Canvas を作成する</h4>
+          <p>ページに Canvas を設置します。</p>
           <div class="terminal">
             <div class="header"></div>
             <div class="shell">
@@ -59,8 +65,8 @@
         </li>
 
         <li>
-          <h4>Create a chart</h4>
-          <p>Now, we can create a chart. We add a script to our page.<br />Don't forget to specify ChartRough as a plugins option.</p>
+          <h4>チャートを作成する</h4>
+          <p>これでチャートを作成することができます。スクリプトをページに追加します。<br />ChartRough を plugins オプションとして指定することを忘れずに。</p>
           <div class="terminal">
             <div class="header"></div>
             <div class="shell">
@@ -88,8 +94,8 @@
         </li>
 
         <li>
-          <h4>Add sketch style options</h4>
-          <p>You can pass in options that control how rough the drawing is<br/ >and how curvy the lines are when drawing a sketch.</p>
+          <h4>スケッチスタイルオプションを追加する</h4>
+          <p>どれだけラフに描画するか、スケッチの線をどれくらい<br />曲げるかをオプションで調整することができます。</p>
           <div class="terminal">
             <div class="header"></div>
             <div class="shell">
@@ -115,8 +121,8 @@
         </li>
 
         <li>
-          <h4>Add fill style options</h4>
-          <p>You can also specify options that control a fill style, the width and the angle<br />of the hachure lines and the average gap between two hachure lines.<br />See the Rough.js <a href="https://github.com/pshihn/rough/wiki#options">documentation</a> for more details.</p>
+          <h4>塗りつぶしスタイルオプションを追加する</h4>
+          <p>さらに、塗りつぶしパターン、線の太さと角度、<br />平均的な間隔をオプションで指定することもできます。<br />詳細は Rough.js の<a href="https://github.com/pshihn/rough/wiki#options">ドキュメント</a>をご覧ください。</p>
 
           <div class="terminal">
             <div class="header"></div>
@@ -145,18 +151,21 @@
         </li>
 
         <li>
-          <h4>Use a hand-writing font</h4>
-          <p>Hand-writing fonts will best match sketchy charts.<br />You can easily use web fonts such as <a href="https://fonts.google.com/specimen/Indie+Flower">Indie Flower</a>.</p>
+          <h4>手書き風フォントを使う</h4>
+          <p>スケッチ風チャートには手書き風フォントが似合います。<br /><a href="http://www.p-darts.jp/font/dartsfont/">ダーツフォント</a>のような Web フォントを使うと簡単です。</p>
           <div class="terminal">
             <div class="header"></div>
             <div class="shell">
-              <p>&lt;link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower"&gt;</p>
+              <p>@font-face {</p>
+              <p>&nbsp;&nbsp;font-family: 'dartsfont';</p>
+              <p>&nbsp;&nbsp;src: url('http://www.p-darts.jp/wf/dartsfont.woff') format('woff');</p>
+              <p>}</p>
             </div>
           </div>
           <div class="terminal">
             <div class="header"></div>
             <div class="shell">
-              <p>Chart.defaults.global.defaultFontFamily = '"Indie Flower", cursive';
+              <p>Chart.defaults.global.defaultFontFamily = 'dartsfont, cursive';
               <p>Chart.defaults.global.defaultFontSize = 14;</p>
               <p>var chart = new Chart(ctx, {</p>
               <p>&nbsp;&nbsp;...</p>
@@ -170,8 +179,8 @@
         </li>
 
         <li>
-          <h4>...and you're done!</h4>
-          <p>See also <a href="https://github.com/nagix/chartjs-plugin-rough">GitHub repository</a> and <a href="./samples">samples</a></p>
+          <h4>...これで完了です！</h4>
+          <p><a href="https://github.com/nagix/chartjs-plugin-rough">GitHub リポジトリ</a>と<a href="../samples">サンプル</a>もご覧ください。</p>
           <div class="hero-octicon">
             <span class="mega-octicon octicon-check"></span>
           </div>
@@ -185,7 +194,7 @@
       var chart1 = new Chart(ctx1, {
         type: 'bar',
         data: {
-          labels: [2015, 2016, 2017, 2018, 2019],
+          labels: ['2015年', '2016年', '2017年', '2018年', '2019年'],
           datasets: [{
             data: [1.0, 2.0, 1.4, 1.2, 1.8],
             backgroundColor: 'rgb(255, 99, 132)',
@@ -217,7 +226,7 @@
                 display: false
               },
               ticks: {
-                fontFamily: '"Indie Flower", cursive',
+                fontFamily: 'dartsfont, "Indie Flower", cursive',
                 fontSize: 18
               }
             }],
@@ -247,7 +256,7 @@
       var chart2 = new Chart(ctx2, {
         type: 'bar',
         data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
           datasets: [{
             data: [45, 20, 64, 32, 76, 51],
             backgroundColor: 'rgb(255, 99, 132)',
@@ -262,7 +271,7 @@
       var chart3 = new Chart(ctx3, {
         type: 'bar',
         data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
           datasets: [{
             data: [45, 20, 64, 32, 76, 51],
             backgroundColor: 'rgb(255, 99, 132)',
@@ -281,7 +290,7 @@
       var chart4 = new Chart(ctx4, {
         type: 'bar',
         data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
           datasets: [{
             data: [45, 20, 64, 32, 76, 51],
             backgroundColor: 'rgb(255, 99, 132)',
@@ -304,7 +313,7 @@
       var chart5 = new Chart(ctx5, {
         type: 'bar',
         data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
           datasets: [{
             data: [45, 20, 64, 32, 76, 51],
             backgroundColor: 'rgb(255, 99, 132)',
@@ -324,26 +333,26 @@
         options: {
           legend: {
             labels: {
-              fontFamily: '"Indie Flower", cursive',
+              fontFamily: 'dartsfont, "Indie Flower", cursive',
               fontSize: 14
             }
           },
           tooltips: {
-            titleFontFamily: '"Indie Flower", cursive',
+            titleFontFamily: 'dartsfont, "Indie Flower", cursive',
             titleFontSize: 14,
-            bodyFontFamily: '"Indie Flower", cursive',
+            bodyFontFamily: 'dartsfont, "Indie Flower", cursive',
             bodyFontSize: 14
           },
           scales: {
             xAxes: [{
               ticks: {
-                fontFamily: '"Indie Flower", cursive',
+                fontFamily: 'dartsfont, "Indie Flower", cursive',
                 fontSize: 14
               }
             }],
             yAxes: [{
               ticks: {
-                fontFamily: '"Indie Flower", cursive',
+                fontFamily: 'dartsfont, "Indie Flower", cursive',
                 fontSize: 14
               }
             }],
