@@ -43,7 +43,7 @@ Then, you need to register the plugin to enable it for all charts in the page.
 Chart.plugins.register(ChartRough);
 ```
 
-Or, you can enabled the plugin only for specific charts.
+Or, you can enable the plugin only for specific charts.
 
 ```js
 var chart = new Chart(ctx, {
