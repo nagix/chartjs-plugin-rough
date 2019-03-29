@@ -1,7 +1,6 @@
 'use strict';
 
 import Chart from 'chart.js';
-
 import RoughBarController from '../controllers/controller.roughBar';
 import RoughBubbleController from '../controllers/controller.roughBubble';
 import RoughDoughnutController from '../controllers/controller.roughDoughnut';
@@ -9,11 +8,12 @@ import RoughHorizontalBarController from '../controllers/controller.roughHorizon
 import RoughLineController from '../controllers/controller.roughLine';
 import RoughPolarAreaController from '../controllers/controller.roughPolarArea';
 import RoughRadarController from '../controllers/controller.roughRadar';
-
 import RoughFillerPlugin from './plugin.roughFiller';
 import RoughLegendPlugin from './plugin.roughLegend';
 
-var controllers = Chart.controllers;
+// For Chart.js 2.7.1 backward compatibility
+var layouts = Chart.layouts || Chart.layoutService;
+
 var plugins = Chart.plugins;
 
 Chart.defaults.global.plugins.rough = {
@@ -38,6 +38,38 @@ var roughControllers = {
 	radar: RoughRadarController,
 	scatter: RoughLineController
 };
+
+// Ported from Chart.js 2.8.0. Modified for style controllers.
+function buildOrUpdateControllers() {
+	var me = this;
+	var newControllers = [];
+
+	Chart.helpers.each(me.data.datasets, function(dataset, datasetIndex) {
+		var meta = me.getDatasetMeta(datasetIndex);
+		var type = dataset.type || me.config.type;
+
+		if (meta.type && meta.type !== type) {
+			me.destroyDatasetMeta(datasetIndex);
+			meta = me.getDatasetMeta(datasetIndex);
+		}
+		meta.type = type;
+
+		if (meta.controller) {
+			meta.controller.updateIndex(datasetIndex);
+			meta.controller.linkScales();
+		} else {
+			var ControllerClass = roughControllers[meta.type];
+			if (ControllerClass === undefined) {
+				throw new Error('"' + meta.type + '" is not a chart type.');
+			}
+
+			meta.controller = new ControllerClass(me, datasetIndex);
+			newControllers.push(meta.controller);
+		}
+	}, me);
+
+	return newControllers;
+}
 
 var descriptors = plugins.descriptors;
 
@@ -80,20 +112,11 @@ export default {
 	beforeInit: function(chart) {
 		chart._rough = {};
 
-		chart.buildOrUpdateControllers = function() {
-			var result;
-
-			// Replace controllers with rough controllers on creation
-			Chart.controllers = roughControllers;
-			result = Chart.prototype.buildOrUpdateControllers.apply(this, arguments);
-			Chart.controllers = controllers;
-
-			return result;
-		};
+		chart.buildOrUpdateControllers = buildOrUpdateControllers;
 
 		// Remove the existing legend if exists
 		if (chart.legend) {
-			Chart.layouts.removeBox(chart, chart.legend);
+			layouts.removeBox(chart, chart.legend);
 			delete chart.legend;
 		}
 

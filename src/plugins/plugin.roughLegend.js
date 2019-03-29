@@ -1,21 +1,22 @@
 'use strict';
 
-import Chart from '../core/core.controller.js';
+import Chart from 'chart.js';
 import rough from 'roughjs';
 import roughHelpers from '../helpers/helpers.rough';
 
 var defaults = Chart.defaults;
 var helpers = Chart.helpers;
-var layouts = Chart.layouts;
 
-var isArray = helpers.isArray;
+// For Chart.js 2.7.1 backward compatibility
+var layouts = Chart.layouts || Chart.layoutService;
+
 var valueOrDefault = helpers.valueOrDefault;
 
 // Ported from Chart.js 2.7.3. Modified for rough legend.
 // Generates labels shown in the legend
 defaults.global.legend.labels.generateLabels = function(chart) {
 	var data = chart.data;
-	return isArray(data.datasets) ? data.datasets.map(function(dataset, i) {
+	return helpers.isArray(data.datasets) ? data.datasets.map(function(dataset, i) {
 		return {
 			text: dataset.label,
 			fillStyle: helpers.valueAtIndexOrDefault(dataset.backgroundColor, 0),

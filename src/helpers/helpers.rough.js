@@ -1,6 +1,6 @@
 'use strict';
 
-import Chart from '../core/core.controller.js';
+import Chart from 'chart.js';
 
 var PI = Math.PI;
 var RAD_PER_DEG = PI / 180;

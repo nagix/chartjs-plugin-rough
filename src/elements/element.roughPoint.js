@@ -1,12 +1,20 @@
 'use strict';
 
-import Chart from '../core/core.controller.js';
+import Chart from 'chart.js';
 import rough from 'roughjs';
 import roughHelpers from '../helpers/helpers.rough';
 
-var Arc = Chart.elements.Point;
+// For Chart.js 2.7.3 backward compatibility
+var isPointInArea = Chart.helpers.canvas._isPointInArea || function(point, area) {
+	var epsilon = 1e-6;
 
-export default Arc.extend({
+	return point.x > area.left - epsilon && point.x < area.right + epsilon &&
+		point.y > area.top - epsilon && point.y < area.bottom + epsilon;
+};
+
+var Point = Chart.elements.Point;
+
+export default Point.extend({
 
 	// Ported from Chart.js 2.7.3. Modified for rough point.
 	draw: function(chartArea) {
@@ -16,13 +24,10 @@ export default Arc.extend({
 		var ctx = chart.ctx;
 		var canvas = rough.canvas(chart.canvas);
 
-		if (vm.skip) {
+		if (vm.skip || chartArea !== undefined && !isPointInArea(vm, chartArea)) {
 			return;
 		}
 
-		// Clipping for Points.
-		if (chartArea === undefined || Chart.helpers.canvas._isPointInArea(vm, chartArea)) {
-			roughHelpers.drawPoint(ctx, vm.pointStyle, vm.radius, vm.x, vm.y, vm.rotation, canvas, vm);
-		}
+		roughHelpers.drawPoint(ctx, vm.pointStyle, vm.radius, vm.x, vm.y, vm.rotation, canvas, vm);
 	}
 });

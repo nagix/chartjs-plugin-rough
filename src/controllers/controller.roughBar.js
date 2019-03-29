@@ -1,6 +1,6 @@
 'use strict';
 
-import Chart from '../core/core.controller.js';
+import Chart from 'chart.js';
 import RoughRectangle from '../elements/element.roughRectangle';
 import roughHelpers from '../helpers/helpers.rough';
 
