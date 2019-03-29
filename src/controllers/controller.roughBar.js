@@ -4,42 +4,29 @@ import Chart from 'chart.js';
 import RoughRectangle from '../elements/element.roughRectangle';
 import roughHelpers from '../helpers/helpers.rough';
 
-var helpers = Chart.helpers;
-
-var resolve = helpers.options.resolve;
-
 var BarController = Chart.controllers.bar;
 
 export default BarController.extend({
 
 	dataElementType: RoughRectangle,
 
-	// Ported from Chart.js 2.7.3. Modified for rough bar.
-	updateElement: function(rectangle, index, reset) {
+	updateElement: function(rectangle) {
 		var me = this;
-		var chart = me.chart;
-		var meta = me.getMeta();
-		var dataset = me.getDataset();
-		var custom = rectangle.custom || {};
-		var options = chart.options;
-		var rectangleOptions = options.elements.rectangle;
+		var model = {};
 
-		rectangle._xScale = me.getScaleForId(meta.xAxisID);
-		rectangle._yScale = me.getScaleForId(meta.yAxisID);
-		rectangle._datasetIndex = me.index;
-		rectangle._index = index;
+		Object.defineProperty(rectangle, '_model', {
+			configurable: true,
+			get: function() {
+				return model;
+			},
+			set: function(value) {
+				Chart.helpers.merge(model, [value, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough)]);
+			}
+		});
 
-		rectangle._model = helpers.merge({
-			datasetLabel: dataset.label,
-			label: chart.data.labels[index],
-			borderSkipped: helpers.valueOrDefault(custom.borderSkipped, rectangleOptions.borderSkipped),
-			backgroundColor: resolve([custom.backgroundColor, dataset.backgroundColor, rectangleOptions.backgroundColor], undefined, index),
-			borderColor: resolve([custom.borderColor, dataset.borderColor, rectangleOptions.borderColor], undefined, index),
-			borderWidth: resolve([custom.borderWidth, dataset.borderWidth, rectangleOptions.borderWidth], undefined, index)
-		}, roughHelpers.resolve(dataset, options.plugins.rough));
+		BarController.prototype.updateElement.apply(me, arguments);
 
-		me.updateElementGeometry(rectangle, index, reset);
-
-		rectangle.pivot();
+		delete rectangle._model;
+		rectangle._model = model;
 	}
 });

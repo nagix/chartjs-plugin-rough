@@ -45,76 +45,23 @@ export default PolarAreaController.extend({
 
 	dataElementType: RoughArc,
 
-	// Ported from Chart.js 2.7.3. Modified for rough polarArea.
-	updateElement: function(arc, index, reset) {
+	updateElement: function(arc) {
 		var me = this;
-		var chart = me.chart;
-		var dataset = me.getDataset();
-		var opts = chart.options;
-		var animationOpts = opts.animation;
-		var scale = chart.scale;
-		var labels = chart.data.labels;
+		var model = {};
 
-		var centerX = scale.xCenter;
-		var centerY = scale.yCenter;
-
-		// var negHalfPI = -0.5 * Math.PI;
-		var datasetStartAngle = opts.startAngle;
-		var distance = arc.hidden ? 0 : scale.getDistanceFromCenterForValue(dataset.data[index]);
-
-		// For Chart.js 2.7.2 backward compatibility
-		var startAngle, endAngle;
-		if (me.calculateCircumference) {
-			var circumference = me.calculateCircumference(dataset.data[index]);
-
-			// If there is NaN data before us, we need to calculate the starting angle correctly.
-			// We could be way more efficient here, but its unlikely that the polar area chart will have a lot of data
-			var visibleCount = 0;
-			var meta = me.getMeta();
-			for (var i = 0; i < index; ++i) {
-				if (!isNaN(dataset.data[i]) && !meta.data[i].hidden) {
-					++visibleCount;
-				}
-			}
-
-			startAngle = datasetStartAngle + (circumference * visibleCount);
-			endAngle = startAngle + (arc.hidden ? 0 : circumference);
-		} else {
-			startAngle = me._starts[index];
-			endAngle = startAngle + (arc.hidden ? 0 : me._angles[index]);
-		}
-
-		var resetRadius = animationOpts.animateScale ? 0 : scale.getDistanceFromCenterForValue(dataset.data[index]);
-
-		helpers.extend(arc, {
-			// Utility
-			_datasetIndex: me.index,
-			_index: index,
-			_scale: scale,
-
-			// Desired view properties
-			_model: {
-				x: centerX,
-				y: centerY,
-				innerRadius: 0,
-				outerRadius: reset ? resetRadius : distance,
-				startAngle: reset && animationOpts.animateRotate ? datasetStartAngle : startAngle,
-				endAngle: reset && animationOpts.animateRotate ? datasetStartAngle : endAngle,
-				label: helpers.valueAtIndexOrDefault(labels, index, labels[index])
+		Object.defineProperty(arc, '_model', {
+			configurable: true,
+			get: function() {
+				return model;
+			},
+			set: function(value) {
+				Chart.helpers.merge(model, [value, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough)]);
 			}
 		});
 
-		// Apply border and fill style
-		var elementOpts = opts.elements.arc;
-		var custom = arc.custom || {};
-		var model = arc._model;
+		PolarAreaController.prototype.updateElement.apply(me, arguments);
 
-		model.backgroundColor = resolve([custom.backgroundColor, dataset.backgroundColor, elementOpts.backgroundColor], undefined, index);
-		model.borderColor = resolve([custom.borderColor, dataset.borderColor, elementOpts.borderColor], undefined, index);
-		model.borderWidth = resolve([custom.borderWidth, dataset.borderWidth, elementOpts.borderWidth], undefined, index);
-
-		helpers.merge(model, roughHelpers.resolve(dataset, opts.plugins.rough));
-
-		arc.pivot();
+		delete arc._model;
+		arc._model = model;
 	}
 });
