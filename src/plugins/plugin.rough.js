@@ -1,6 +1,7 @@
 'use strict';
 
 import Chart from 'chart.js';
+import RoughTooltip from '../core/core.roughTooltip';
 import RoughBarController from '../controllers/controller.roughBar';
 import RoughBubbleController from '../controllers/controller.roughBubble';
 import RoughDoughnutController from '../controllers/controller.roughDoughnut';
@@ -71,6 +72,17 @@ function buildOrUpdateControllers() {
 	return newControllers;
 }
 
+// Ported from Chart.js 2.8.0. Modified for style tooltip.
+function initToolTip() {
+	var me = this;
+	me.tooltip = new RoughTooltip({
+		_chart: me,
+		_chartInstance: me, // deprecated, backward compatibility
+		_data: me.data,
+		_options: me.options.tooltips
+	}, me);
+}
+
 var descriptors = plugins.descriptors;
 
 plugins.descriptors = function(chart) {
@@ -113,6 +125,7 @@ export default {
 		chart._rough = {};
 
 		chart.buildOrUpdateControllers = buildOrUpdateControllers;
+		chart.initToolTip = initToolTip;
 
 		// Remove the existing legend if exists
 		if (chart.legend) {
