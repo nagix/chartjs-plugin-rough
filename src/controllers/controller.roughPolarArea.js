@@ -8,7 +8,7 @@ var helpers = Chart.helpers;
 
 var resolve = helpers.options.resolve;
 
-// Ported from Chart.js 2.7.3. Modified for rough polarArea.
+// Ported from Chart.js 2.8.0. Modified for rough polarArea.
 Chart.defaults.polarArea.legend.labels.generateLabels = function(chart) {
 	var data = chart.data;
 	if (data.labels.length && data.datasets.length) {

@@ -12,7 +12,7 @@ var layouts = Chart.layouts || Chart.layoutService;
 
 var valueOrDefault = helpers.valueOrDefault;
 
-// Ported from Chart.js 2.7.3. Modified for rough legend.
+// Ported from Chart.js 2.8.0. Modified for rough legend.
 // Generates labels shown in the legend
 defaults.global.legend.labels.generateLabels = function(chart) {
 	var data = chart.data;
@@ -36,160 +36,54 @@ defaults.global.legend.labels.generateLabels = function(chart) {
 	}, this) : [];
 };
 
-/**
- * Ported from Chart.js 2.7.3.
- *
- * Helper function to get the box width based on the usePointStyle option
- * @param labelopts {Object} the label options on the legend
- * @param fontSize {Number} the label font size
- * @return {Number} width of the color box area
- */
-function getBoxWidth(labelOpts, fontSize) {
-	return labelOpts.usePointStyle ?
-		fontSize * Math.SQRT2 :
-		labelOpts.boxWidth;
-}
-
 var RoughLegend = Chart.Legend.extend({
 
-	// Ported from Chart.js 2.7.3. Modified for rough legend.
-	// Actually draw the legend on the canvas
 	draw: function() {
 		var me = this;
-		var opts = me.options;
-		var labelOpts = opts.labels;
-		var globalDefault = defaults.global;
-		var lineDefault = globalDefault.elements.line;
-		var legendWidth = me.width;
-		var lineWidths = me.lineWidths;
-		var canvas = rough.canvas(this.chart.canvas);
+		var globalDefaults = defaults.global;
+		var each = helpers.each;
+		var drawPoint = helpers.canvas.drawPoint;
+		var canvas = rough.canvas(me.chart.canvas);
+		var ctx = me.ctx;
+		var roughOpts;
 
-		if (opts.display) {
-			var ctx = me.ctx;
-			var fontColor = valueOrDefault(labelOpts.fontColor, globalDefault.defaultFontColor);
-			var fontSize = valueOrDefault(labelOpts.fontSize, globalDefault.defaultFontSize);
-			var fontStyle = valueOrDefault(labelOpts.fontStyle, globalDefault.defaultFontStyle);
-			var fontFamily = valueOrDefault(labelOpts.fontFamily, globalDefault.defaultFontFamily);
-			var labelFont = helpers.fontString(fontSize, fontStyle, fontFamily);
-			var cursor;
-
-			// Canvas setup
-			ctx.textAlign = 'left';
-			ctx.textBaseline = 'middle';
-			ctx.lineWidth = 0.5;
-			ctx.strokeStyle = fontColor; // for strikethrough effect
-			ctx.fillStyle = fontColor; // render in correct colour
-			ctx.font = labelFont;
-
-			var boxWidth = getBoxWidth(labelOpts, fontSize);
-			var hitboxes = me.legendHitBoxes;
-
-			// current position
-			var drawLegendBox = function(x, y, legendItem) {
-				if (isNaN(boxWidth) || boxWidth <= 0) {
-					return;
-				}
-
-				var isLineWidthZero = (valueOrDefault(legendItem.lineWidth, lineDefault.borderWidth) === 0);
-
-				var roughOpts = helpers.merge({
-					borderColor: valueOrDefault(legendItem.strokeStyle, globalDefault.defaultColor),
-					borderWidth: valueOrDefault(legendItem.lineWidth, lineDefault.borderWidth),
-					backgroundColor: valueOrDefault(legendItem.fillStyle, globalDefault.defaultColor)
+		helpers.each = function(loopable, fn) {
+			each(loopable, function(legendItem) {
+				roughOpts = helpers.extend({
+					borderColor: valueOrDefault(legendItem.strokeStyle, globalDefaults.defaultColor),
+					borderWidth: valueOrDefault(legendItem.lineWidth, globalDefaults.elements.line.borderWidth),
+					backgroundColor: valueOrDefault(legendItem.fillStyle, globalDefaults.defaultColor)
 				}, legendItem.rough);
 
-				if (opts.labels && opts.labels.usePointStyle) {
-					// Recalculate x and y for drawPoint() because its expecting
-					// x and y to be center of figure (instead of top left)
-					var radius = fontSize * Math.SQRT2 / 2;
-					var offSet = radius / Math.SQRT2;
-					var centerX = x + offSet;
-					var centerY = y + offSet;
-
-					// Draw pointStyle as legend symbol
-					roughHelpers.drawPoint(ctx, legendItem.pointStyle, radius, centerX, centerY, 0, canvas, roughOpts);
-				} else {
-					// Draw box as legend symbol
-					canvas.rectangle(x, y, boxWidth, fontSize, roughHelpers.getFillOptions(roughOpts));
-					if (!isLineWidthZero) {
-						canvas.rectangle(x, y, boxWidth, fontSize, roughHelpers.getStrokeOptions(roughOpts));
-					}
-				}
-
-				// ctx.restore();
-			};
-			var fillText = function(x, y, legendItem, textWidth) {
-				var halfFontSize = fontSize / 2;
-				var xLeft = boxWidth + halfFontSize + x;
-				var yMiddle = y + halfFontSize;
-
-				ctx.fillText(legendItem.text, xLeft, yMiddle);
-
-				if (legendItem.hidden) {
-					// Strikethrough the text if hidden
-					ctx.beginPath();
-					ctx.lineWidth = 2;
-					ctx.moveTo(xLeft, yMiddle);
-					ctx.lineTo(xLeft + textWidth, yMiddle);
-					ctx.stroke();
-				}
-			};
-
-			// Horizontal
-			var isHorizontal = me.isHorizontal();
-			if (isHorizontal) {
-				cursor = {
-					x: me.left + ((legendWidth - lineWidths[0]) / 2),
-					y: me.top + labelOpts.padding,
-					line: 0
-				};
-			} else {
-				cursor = {
-					x: me.left + labelOpts.padding,
-					y: me.top + labelOpts.padding,
-					line: 0
-				};
-			}
-
-			var itemHeight = fontSize + labelOpts.padding;
-			helpers.each(me.legendItems, function(legendItem, i) {
-				var textWidth = ctx.measureText(legendItem.text).width;
-				var width = boxWidth + (fontSize / 2) + textWidth;
-				var x = cursor.x;
-				var y = cursor.y;
-
-				if (isHorizontal) {
-					if (x + width >= legendWidth) {
-						y = cursor.y += itemHeight;
-						cursor.line++;
-						x = cursor.x = me.left + ((legendWidth - lineWidths[cursor.line]) / 2);
-					}
-				} else if (y + itemHeight > me.bottom) {
-					x = cursor.x = x + me.columnWidths[cursor.line] + labelOpts.padding;
-					y = cursor.y = me.top + labelOpts.padding;
-					cursor.line++;
-				}
-
-				drawLegendBox(x, y, legendItem);
-
-				hitboxes[i].left = x;
-				hitboxes[i].top = y;
-
-				// Fill the actual label
-				fillText(x, y, legendItem, textWidth);
-
-				if (isHorizontal) {
-					cursor.x += width + (labelOpts.padding);
-				} else {
-					cursor.y += itemHeight;
-				}
-
+				fn.apply(null, arguments);
 			});
-		}
+		};
+
+		helpers.canvas.drawPoint = function(context, style, radius, x, y, rotation) {
+			roughHelpers.drawPoint(context, style, radius, x, y, rotation, canvas, roughOpts);
+		};
+
+		ctx.strokeRect = function() {
+			// noop
+		};
+
+		ctx.fillRect = function(x, y, width, height) {
+			canvas.rectangle(x, y, width, height, roughHelpers.getFillOptions(roughOpts));
+			if (roughOpts.borderWidth !== 0) {
+				canvas.rectangle(x, y, width, height, roughHelpers.getStrokeOptions(roughOpts));
+			}
+		};
+
+		Chart.Legend.prototype.draw.apply(me, arguments);
+
+		helpers.each = each;
+		helpers.canvas.drawPoint = drawPoint;
+		delete ctx.fillRect;
+		delete ctx.strokeRect;
 	}
 });
 
-// Ported from Chart.js 2.7.3. Modified for rough legend.
+// Ported from Chart.js 2.8.0. Modified for rough legend.
 function createNewLegendAndAttach(chart, legendOpts) {
 	var legend = new RoughLegend({
 		ctx: chart.ctx,
@@ -207,7 +101,7 @@ export default {
 
 	_element: RoughLegend,
 
-	// Ported from Chart.js 2.7.3.
+	// Ported from Chart.js 2.8.0.
 	beforeInit: function(chart) {
 		var legendOpts = chart.options.legend;
 
@@ -216,7 +110,7 @@ export default {
 		}
 	},
 
-	// Ported from Chart.js 2.7.3.
+	// Ported from Chart.js 2.8.0.
 	beforeUpdate: function(chart) {
 		var legendOpts = chart.options.legend;
 		var legend = chart.legend;
@@ -236,7 +130,7 @@ export default {
 		}
 	},
 
-	// Ported from Chart.js 2.7.3.
+	// Ported from Chart.js 2.8.0.
 	afterEvent: function(chart, e) {
 		var legend = chart.legend;
 		if (legend) {

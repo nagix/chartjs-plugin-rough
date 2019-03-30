@@ -9,7 +9,7 @@ var helpers = Chart.helpers;
 
 var resolve = helpers.options.resolve;
 
-// Ported from Chart.js 2.7.3. Modified for rough doughnut.
+// Ported from Chart.js 2.8.0. Modified for rough doughnut.
 defaults.doughnut.legend.labels.generateLabels = defaults.pie.legend.labels.generateLabels = function(chart) {
 	var data = chart.data;
 	if (data.labels.length && data.datasets.length) {
