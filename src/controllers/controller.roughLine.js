@@ -5,7 +5,7 @@ import RoughLine from '../elements/element.roughLine';
 import RoughPoint from '../elements/element.roughPoint';
 import roughHelpers from '../helpers/helpers.rough';
 
-var helpers = Chart.helpers;
+var extend = Chart.helpers.extend;
 
 var LineController = Chart.controllers.line;
 
@@ -26,7 +26,7 @@ export default LineController.extend({
 				return model;
 			},
 			set: function(value) {
-				helpers.merge(model, [value, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough)]);
+				extend(model, value, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough));
 			}
 		});
 
@@ -41,6 +41,6 @@ export default LineController.extend({
 
 		LineController.prototype.updateElement.apply(me, arguments);
 
-		helpers.merge(point._model, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough));
+		extend(point._model, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough));
 	}
 });

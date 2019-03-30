@@ -56,7 +56,7 @@ export default DoughnutController.extend({
 				return model;
 			},
 			set: function(value) {
-				Chart.helpers.merge(model, [value, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough)]);
+				Chart.helpers.extend(model, value, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough));
 			}
 		});
 
