@@ -4,94 +4,112 @@ import Chart from 'chart.js';
 import rough from 'roughjs';
 import roughHelpers from '../helpers/helpers.rough';
 
+
+// Ported from Chart.js 2.8.0. Modified for rough rectangle.
+function getBarBounds(vm) {
+	var x = vm.x;
+	var y = vm.y;
+	var width = vm.width;
+	var base = vm.base;
+	var half;
+
+	if (width !== undefined) {
+		half = width / 2;
+		return {
+			l: x - half,
+			r: x + half,
+			t: Math.min(y, base),
+			b: Math.max(y, base)
+		};
+	}
+	half = vm.height / 2;
+	return {
+		l: Math.min(x, base),
+		r: Math.max(x, base),
+		t: y - half,
+		b: y + half
+	};
+}
+
+// Ported from Chart.js 2.8.0. Modified for rough rectangle.
+function parseBorderSkipped(vm) {
+	var edge = vm.borderSkipped;
+	var base = vm.base;
+	var res = {};
+
+	if (!edge) {
+		return res;
+	}
+
+	if (vm.horizontal) {
+		if (base > vm.x) {
+			edge = edge === 'left' ? 'right' : edge === 'right' ? 'left' : edge;
+		}
+	} else if (base < vm.y) {
+		edge = edge === 'bottom' ? 'top' : edge === 'top' ? 'bottom' : edge;
+	}
+
+	res[edge] = true;
+	return res;
+}
+
+// Ported from Chart.js 2.8.0. Modified for rough rectangle.
+function parseBorderWidth(vm, maxW, maxH) {
+	var value = vm.borderWidth;
+	var skip = parseBorderSkipped(vm);
+	var top, right, bottom, left;
+
+	if (Chart.helpers.isObject(value)) {
+		top = +value.top || 0;
+		right = +value.right || 0;
+		bottom = +value.bottom || 0;
+		left = +value.left || 0;
+	} else {
+		top = right = bottom = left = +value || 0;
+	}
+
+	return {
+		t: skip.top || (top < 0) ? 0 : top > maxH ? maxH : top,
+		r: skip.right || (right < 0) ? 0 : right > maxW ? maxW : right,
+		b: skip.bottom || (bottom < 0) ? 0 : bottom > maxH ? maxH : bottom,
+		l: skip.left || (left < 0) ? 0 : left > maxW ? maxW : left
+	};
+}
+
 var Rectangle = Chart.elements.Rectangle;
 
 export default Rectangle.extend({
 
-	// Ported from Chart.js 2.7.3. Modified for rough rectangle.
+	// Ported from Chart.js 2.8.0. Modified for rough rectangle.
 	draw: function() {
 		var me = this;
 		var vm = me._view;
-		var left, right, top, bottom, signX, signY, borderSkipped;
-		var borderWidth = vm.borderWidth;
+		var bounds = getBarBounds(vm);
+		var border = parseBorderWidth(vm, (bounds.r - bounds.l) / 2, (bounds.b - bounds.t) / 2);
+		var left = bounds.l + border.l / 2;
+		var top = bounds.t + border.t / 2;
+		var right = bounds.r - border.r / 2;
+		var bottom = bounds.b - border.b / 2;
 		var canvas = rough.canvas(me._chart.canvas);
+		var fillOptions = roughHelpers.getFillOptions(vm);
+		var strokeOptions = roughHelpers.getStrokeOptions(vm);
 
-		if (!vm.horizontal) {
-			// bar
-			left = vm.x - vm.width / 2;
-			right = vm.x + vm.width / 2;
-			top = vm.y;
-			bottom = vm.base;
-			signX = 1;
-			signY = bottom > top ? 1 : -1;
-			borderSkipped = vm.borderSkipped || 'bottom';
-		} else {
-			// horizontal bar
-			left = vm.base;
-			right = vm.x;
-			top = vm.y - vm.height / 2;
-			bottom = vm.y + vm.height / 2;
-			signX = right > left ? 1 : -1;
-			signY = 1;
-			borderSkipped = vm.borderSkipped || 'left';
+		canvas.rectangle(left, top, right - left, bottom - top, fillOptions);
+		if (border.l) {
+			strokeOptions.strokeWidth = border.l;
+			canvas.line(left, bottom, left, top, strokeOptions);
 		}
-
-		// Canvas doesn't allow us to stroke inside the width so we can
-		// adjust the sizes to fit if we're setting a stroke on the line
-		if (borderWidth) {
-			// borderWidth shold be less than bar width and bar height.
-			var barSize = Math.min(Math.abs(left - right), Math.abs(top - bottom));
-			borderWidth = borderWidth > barSize ? barSize : borderWidth;
-			var halfStroke = borderWidth / 2;
-			// Adjust borderWidth when bar top position is near vm.base(zero).
-			var borderLeft = left + (borderSkipped !== 'left' ? halfStroke * signX : 0);
-			var borderRight = right + (borderSkipped !== 'right' ? -halfStroke * signX : 0);
-			var borderTop = top + (borderSkipped !== 'top' ? halfStroke * signY : 0);
-			var borderBottom = bottom + (borderSkipped !== 'bottom' ? -halfStroke * signY : 0);
-			// not become a vertical line?
-			if (borderLeft !== borderRight) {
-				top = borderTop;
-				bottom = borderBottom;
-			}
-			// not become a horizontal line?
-			if (borderTop !== borderBottom) {
-				left = borderLeft;
-				right = borderRight;
-			}
+		if (border.t) {
+			strokeOptions.strokeWidth = border.t;
+			canvas.line(left, top, right, top, strokeOptions);
 		}
-
-		// Corner points, from bottom-left to bottom-right clockwise
-		// | 1 2 |
-		// | 0 3 |
-		var corners = [
-			[left, bottom],
-			[left, top],
-			[right, top],
-			[right, bottom]
-		];
-
-		// Find first (starting) corner with fallback to 'bottom'
-		var borders = ['bottom', 'left', 'top', 'right'];
-		var startCorner = borders.indexOf(borderSkipped, 0);
-		if (startCorner === -1) {
-			startCorner = 0;
+		if (border.r) {
+			strokeOptions.strokeWidth = border.r;
+			canvas.line(right, top, right, bottom, strokeOptions);
 		}
-
-		function cornerAt(index) {
-			return corners[(startCorner + index) % 4];
-		}
-
-		canvas.rectangle(
-			corners[1][0], corners[1][1], corners[3][0] - corners[1][0], corners[3][1] - corners[1][1],
-			roughHelpers.getFillOptions(vm));
-
-		if (borderWidth) {
-			var corner = cornerAt(0);
-			for (var i = 1; i < 4; i++) {
-				var nextCorner = cornerAt(i);
-				canvas.line(corner[0], corner[1], nextCorner[0], nextCorner[1], roughHelpers.getStrokeOptions(vm));
-				corner = nextCorner;
-			}
+		if (border.b) {
+			strokeOptions.strokeWidth = border.b;
+			canvas.line(right, bottom, left, bottom, strokeOptions);
 		}
 	}
 });
