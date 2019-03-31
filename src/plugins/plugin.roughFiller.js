@@ -10,12 +10,12 @@ var FillerPlugin = Chart.plugins.getAll().filter(function(plugin) {
 	return plugin.id === 'filler';
 })[0];
 
-// Ported from Chart.js 2.7.3.
+// Ported from Chart.js 2.8.0.
 function isDrawable(point) {
 	return point && !point.skip;
 }
 
-// Ported from Chart.js 2.7.3. Modified for rough filler.
+// Ported from Chart.js 2.8.0. Modified for rough filler.
 function drawArea(curve0, curve1, len0, len1) {
 	var path, i;
 
@@ -40,7 +40,7 @@ function drawArea(curve0, curve1, len0, len1) {
 	return path;
 }
 
-// Ported from Chart.js 2.7.3. Modified for rough filler.
+// Ported from Chart.js 2.8.0. Modified for rough filler.
 function doFill(chart, points, mapper, view, color, loop) {
 	var count = points.length;
 	var span = view.spanGaps;
@@ -84,8 +84,8 @@ function doFill(chart, points, mapper, view, color, loop) {
 	canvas.path(path, roughHelpers.getFillOptions(view));
 }
 
-export default helpers.merge({}, [FillerPlugin, {
-	// Ported from Chart.js 2.7.3.
+export default helpers.extend({}, FillerPlugin, {
+	// Ported from Chart.js 2.8.0.
 	beforeDatasetDraw: function(chart, args) {
 		var meta = args.meta.$filler;
 		if (!meta) {
@@ -105,4 +105,4 @@ export default helpers.merge({}, [FillerPlugin, {
 			helpers.canvas.unclipArea(ctx);
 		}
 	}
-}]);
+});

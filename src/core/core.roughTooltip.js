@@ -28,11 +28,13 @@ export default Tooltip.extend({
 	update: function() {
 		var me = this;
 		var roughOptions = [];
+		var model;
 
 		Tooltip.prototype.update.apply(me, arguments);
 
+		model = me._model;
 		if (me._active.length) {
-			helpers.each(me._model.dataPoints, function(tooltipItem) {
+			helpers.each(model.dataPoints, function(tooltipItem) {
 				var meta = me._chart.getDatasetMeta(tooltipItem.datasetIndex);
 				var activeElement = meta.data[tooltipItem.index];
 				var view = activeElement._view;
@@ -42,7 +44,7 @@ export default Tooltip.extend({
 					strokeOptions: roughHelpers.getStrokeOptions(view)
 				});
 			});
-			me._model.rough = roughOptions;
+			model.rough = roughOptions;
 		}
 
 		return me;

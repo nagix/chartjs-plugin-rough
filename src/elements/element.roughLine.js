@@ -8,7 +8,7 @@ var Line = Chart.elements.Line;
 
 export default Line.extend({
 
-	// Ported from Chart.js 2.7.3. Modified for rough line.
+	// Ported from Chart.js 2.8.0. Modified for rough line.
 	draw: function() {
 		var me = this;
 		var vm = me._view;
@@ -16,7 +16,7 @@ export default Line.extend({
 		var points = me._children.slice(); // clone array
 		var lastDrawnIndex = -1;
 		var index, current, previous, currentVM;
-		var canvas = rough.canvas(this._chart.canvas);
+		var canvas = rough.canvas(me._chart.canvas);
 		var path = '';
 
 		// If we are looping, adding the first point again

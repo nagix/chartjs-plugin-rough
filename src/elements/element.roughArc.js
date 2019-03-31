@@ -8,9 +8,10 @@ var Arc = Chart.elements.Arc;
 
 export default Arc.extend({
 
-	// Ported from Chart.js 2.7.3. Modified for rough arc.
+	// Ported from Chart.js 2.8.0. Modified for rough arc.
 	draw: function() {
-		var vm = this._view;
+		var me = this;
+		var vm = me._view;
 		var x = vm.x;
 		var y = vm.y;
 		var outerRadius = vm.outerRadius;
@@ -22,7 +23,7 @@ export default Arc.extend({
 		var eCos = Math.cos(eA);
 		var eSin = Math.sin(eA);
 		var isLargeArc = eA - sA > Math.PI ? 1 : 0;
-		var canvas = rough.canvas(this._chart.canvas);
+		var canvas = rough.canvas(me._chart.canvas);
 
 		var path =
 			'M' + (x + outerRadius * sCos) + ' ' + (y + outerRadius * sSin) +

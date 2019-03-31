@@ -55,7 +55,7 @@ export default PolarAreaController.extend({
 				return model;
 			},
 			set: function(value) {
-				Chart.helpers.extend(model, value, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough));
+				helpers.extend(model, value, roughHelpers.resolve(me.getDataset(), me.chart.options.plugins.rough));
 			}
 		});
 
