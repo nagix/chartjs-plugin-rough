@@ -5,7 +5,7 @@
 	<title>chartjs-plugin-rough sample</title>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/rough.js/3.0.0/rough.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/rough.js/3.1.0/rough.js"></script>
 	<script src="../dist/chartjs-plugin-rough.js"></script>
 	<style>
 		canvas {
@@ -69,6 +69,9 @@
 				<option value="zigzag">zigzag</option>
 				<option value="cross-hatch">cross-hatch</option>
 				<option value="dots">dots</option>
+				<option value="starburst">starburst</option>
+				<option value="dashed">dashed</option>
+				<option value="zigzag-line">zigzag-line</option>
 			</select></span>
 		</div>
 		<div class="text-center">
@@ -84,7 +87,7 @@
 		<div class="text-center">
 			<span class="label">hachureGap:</span>
 			<span id="hachureGapValue" class="value">4</span>
-			<span><input type="range" min="0" max="50" step="1" value="4" id="hachureGap" class="control"></span>
+			<span><input type="range" min="1" max="50" step="1" value="4" id="hachureGap" class="control"></span>
 		</div>
 		<div class="text-center">
 			<span class="label">curveStepCount:</span>
@@ -166,9 +169,28 @@
 					rough: {
 						enabled: true
 					}
-				}
+				},
+				onResize: updateHachureGap
 			}
 		};
+
+		function updateHachureGap(chart, size) {
+			var roughOptions = config.options.plugins.rough;
+			var fillStyle = roughOptions.fillStyle;
+			var hachureGapElement = document.getElementById('hachureGap');
+			var hachureGap;
+
+			if (fillStyle === 'dots' || fillStyle === 'dashed' || fillStyle === 'zigzag-line') {
+				hachureGapMin = Math.ceil(size.width * size.height / (fillStyle === 'dots' ? 20000 : 60000));
+				hachureGap = Math.max(roughOptions.hachureGap, hachureGapMin);
+				roughOptions.hachureGap = hachureGap;
+				hachureGapElement.min = hachureGapMin;
+				hachureGapElement.value = hachureGap;
+				document.getElementById('hachureGapValue').innerHTML = hachureGap;
+			} else {
+				hachureGapElement.min = 1;
+			}
+		}
 
 		Chart.defaults.global.defaultFontFamily = '"Indie Flower", cursive';
 		Chart.defaults.global.defaultFontSize = 14;
@@ -248,6 +270,10 @@
 
 		document.getElementById('fillStyle').addEventListener(isIE ? 'change' : 'input', function() {
 			config.options.plugins.rough.fillStyle = this.value;
+			updateHachureGap(window.myChart, {
+				width: window.myChart.width,
+				height: window.myChart.height
+			});
 			window.myChart.update({duration: 0});
 			document.getElementById('fillStyleValue').innerHTML = '\'' + this.value + '\'';
 		});
